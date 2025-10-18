@@ -1,0 +1,298 @@
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
+import { SectionHeader } from '../components/SectionHeader';
+import { Badge } from '../components/Badge';
+export function Dashboard() {
+  // Sample user data - in a real app this would come from an API
+  const userData = {
+    name: 'Alex Johnson',
+    email: 'alex.johnson@university.edu',
+    reservations: [{
+      id: 'res1',
+      bookTitle: 'Introduction to Psychology',
+      course: 'PSY 101',
+      reservedDate: 'Sep 10, 2023',
+      pickupBy: 'Sep 17, 2023',
+      status: 'ready' as const
+    }, {
+      id: 'res2',
+      bookTitle: 'Principles of Microeconomics',
+      course: 'ECON 101',
+      reservedDate: 'Sep 5, 2023',
+      pickupBy: 'Sep 12, 2023',
+      status: 'pending' as const
+    }],
+    donations: [{
+      id: 'don1',
+      bookTitle: 'Calculus: Early Transcendentals',
+      course: 'MATH 201',
+      donationDate: 'Aug 15, 2023',
+      status: 'available' as const
+    }, {
+      id: 'don2',
+      bookTitle: 'Organic Chemistry',
+      course: 'CHEM 301',
+      donationDate: 'Jul 22, 2023',
+      status: 'reserved' as const
+    }],
+    advice: [{
+      id: 'adv1',
+      text: 'Always review the lecture slides before starting the homework assignments.',
+      course: 'CS 101',
+      date: 'Aug 15, 2023'
+    }, {
+      id: 'adv2',
+      text: 'Form a study group early in the semester. The final exam is comprehensive and challenging.',
+      course: 'CHEM 301',
+      date: 'Jul 22, 2023'
+    }]
+  };
+  const reservationStatusLabels = {
+    ready: 'Ready for Pickup',
+    pending: 'Processing',
+    completed: 'Completed',
+    cancelled: 'Cancelled'
+  };
+  const reservationStatusVariants = {
+    ready: 'success' as const,
+    pending: 'warning' as const,
+    completed: 'info' as const,
+    cancelled: 'error' as const
+  };
+  const donationStatusLabels = {
+    available: 'Available',
+    reserved: 'Reserved',
+    unavailable: 'No Longer Available'
+  };
+  const donationStatusVariants = {
+    available: 'inStock' as const,
+    reserved: 'warning' as const,
+    unavailable: 'outOfStock' as const
+  };
+  return <div className="bg-gray-50 w-full min-h-screen py-8">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <SectionHeader title="Your Dashboard" />
+          <div className="mt-4 md:mt-0">
+            <Button variant="outline">Edit Profile</Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <Card className="lg:col-span-1">
+            <Card.Header>
+              <h3 className="text-lg font-bold">Profile</h3>
+            </Card.Header>
+            <Card.Body>
+              <div className="flex items-center mb-4">
+                <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mr-4">
+                  <span className="text-blue-600 font-bold text-xl">
+                    {userData.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg">{userData.name}</h4>
+                  <p className="text-gray-600">{userData.email}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="bg-gray-100 rounded-md p-3">
+                  <p className="text-2xl font-bold text-blue-600">
+                    {userData.reservations.length}
+                  </p>
+                  <p className="text-sm text-gray-600">Reservations</p>
+                </div>
+                <div className="bg-gray-100 rounded-md p-3">
+                  <p className="text-2xl font-bold text-orange-500">
+                    {userData.donations.length}
+                  </p>
+                  <p className="text-sm text-gray-600">Donations</p>
+                </div>
+              </div>
+            </Card.Body>
+          </Card>
+          <Card className="lg:col-span-2">
+            <Card.Header className="bg-blue-50">
+              <h3 className="text-lg font-bold">Activity Summary</h3>
+            </Card.Header>
+            <Card.Body>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white rounded-md p-4 border border-gray-200">
+                  <p className="text-sm text-gray-500 mb-1">Total Saved</p>
+                  <p className="text-2xl font-bold text-blue-600">$62.50</p>
+                </div>
+                <div className="bg-white rounded-md p-4 border border-gray-200">
+                  <p className="text-sm text-gray-500 mb-1">Books Reserved</p>
+                  <p className="text-2xl font-bold">2</p>
+                </div>
+                <div className="bg-white rounded-md p-4 border border-gray-200">
+                  <p className="text-sm text-gray-500 mb-1">Books Donated</p>
+                  <p className="text-2xl font-bold text-orange-500">2</p>
+                </div>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+        <div className="grid grid-cols-1 gap-8">
+          <Card>
+            <Card.Header>
+              <h3 className="text-lg font-bold">Your Reservations</h3>
+            </Card.Header>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Book
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Course
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Reserved Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Pickup By
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {userData.reservations.map(reservation => <tr key={reservation.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {reservation.bookTitle}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {reservation.course}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {reservation.reservedDate}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {reservation.pickupBy}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant={reservationStatusVariants[reservation.status]}>
+                          {reservationStatusLabels[reservation.status]}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </td>
+                    </tr>)}
+                </tbody>
+              </table>
+            </div>
+            {userData.reservations.length === 0 && <div className="text-center py-8">
+                <p className="text-gray-500">You have no reservations yet.</p>
+                <Button variant="primary" className="mt-4">
+                  Find Textbooks
+                </Button>
+              </div>}
+          </Card>
+          <Card>
+            <Card.Header>
+              <h3 className="text-lg font-bold">Your Donations</h3>
+            </Card.Header>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Book
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Course
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Donation Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {userData.donations.map(donation => <tr key={donation.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {donation.bookTitle}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {donation.course}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">
+                          {donation.donationDate}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant={donationStatusVariants[donation.status]}>
+                          {donationStatusLabels[donation.status]}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </td>
+                    </tr>)}
+                </tbody>
+              </table>
+            </div>
+            {userData.donations.length === 0 && <div className="text-center py-8">
+                <p className="text-gray-500">
+                  You have not donated any books yet.
+                </p>
+                <Button variant="primary" className="mt-4">
+                  Donate a Book
+                </Button>
+              </div>}
+          </Card>
+          <Card>
+            <Card.Header>
+              <h3 className="text-lg font-bold">Your Advice</h3>
+            </Card.Header>
+            <Card.Body>
+              {userData.advice.length > 0 ? <div className="space-y-4">
+                  {userData.advice.map(item => <div key={item.id} className="p-4 bg-gray-50 rounded-md border border-gray-200">
+                      <p className="text-gray-800 italic mb-2">"{item.text}"</p>
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>{item.course}</span>
+                        <span>{item.date}</span>
+                      </div>
+                    </div>)}
+                </div> : <div className="text-center py-8">
+                  <p className="text-gray-500">
+                    You have not shared any advice yet.
+                  </p>
+                  <Button variant="primary" className="mt-4">
+                    Share Advice
+                  </Button>
+                </div>}
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
+    </div>;
+}
