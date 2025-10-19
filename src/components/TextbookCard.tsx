@@ -1,16 +1,15 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Badge } from './Badge';
-import { Card } from './Card';
+import { Link } from 'react-router-dom'
+import { Badge } from './Badge'
+import { Card } from './Card'
 interface TextbookCardProps {
-  id: string;
-  title: string;
-  author: string;
-  course: string;
-  professor: string;
-  price: number;
-  image: string;
-  availability: 'inStock' | 'lowStock' | 'outOfStock';
+  id: string
+  title: string
+  author: string
+  course: string
+  professor: string
+  price: number
+  image: string
+  availability: 'inStock' | 'lowStock' | 'outOfStock'
 }
 export function TextbookCard({
   id,
@@ -20,17 +19,22 @@ export function TextbookCard({
   professor,
   price,
   image,
-  availability
+  availability,
 }: TextbookCardProps) {
   const availabilityLabel = {
     inStock: 'In Stock',
     lowStock: 'Low Stock',
-    outOfStock: 'Out of Stock'
-  };
-  return <Link to={`/textbook/${id}`}>
+    outOfStock: 'Out of Stock',
+  }
+  return (
+    <Link to={`/textbook/${id}`}>
       <Card className="h-full transition-transform hover:translate-y-[-4px] hover:shadow-md">
         <div className="relative pt-[75%] bg-gray-100">
-          <img src={image} alt={title} className="absolute top-0 left-0 w-full h-full object-cover" />
+          <img
+            src={image}
+            alt={title}
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          />
           <div className="absolute top-2 right-2">
             <Badge variant={availability}>
               {availabilityLabel[availability]}
@@ -51,5 +55,6 @@ export function TextbookCard({
           </div>
         </Card.Body>
       </Card>
-    </Link>;
+    </Link>
+  )
 }

@@ -1,8 +1,5 @@
-// src/components/Badge.tsx
-import type { ReactNode } from 'react'
-import { cn } from '@/lib/utils' // or use your own join if you prefer
-
-export type BadgeVariant =
+import React from 'react'
+type BadgeVariant =
   | 'inStock'
   | 'lowStock'
   | 'outOfStock'
@@ -10,31 +7,24 @@ export type BadgeVariant =
   | 'success'
   | 'warning'
   | 'error'
-
-export interface BadgeProps {
-  variant?: BadgeVariant
-  children: ReactNode
+interface BadgeProps {
+  variant: BadgeVariant
+  children: React.ReactNode
   className?: string
 }
-
-const VARIANT: Record<BadgeVariant, string> = {
-  inStock: 'bg-emerald-100 text-emerald-800',
-  lowStock: 'bg-amber-100 text-amber-800',
-  outOfStock: 'bg-rose-100 text-rose-800',
-  info: 'bg-slate-100 text-slate-800',
-  success: 'bg-emerald-100 text-emerald-800',
-  warning: 'bg-amber-100 text-amber-800',
-  error: 'bg-rose-100 text-rose-800',
-}
-
-export function Badge({ variant = 'info', children, className }: BadgeProps) {
+export function Badge({ variant, children, className = '' }: BadgeProps) {
+  const variantClasses = {
+    inStock: 'bg-green-100 text-green-800',
+    lowStock: 'bg-yellow-100 text-yellow-800',
+    outOfStock: 'bg-red-100 text-red-800',
+    info: 'bg-blue-100 text-blue-800',
+    success: 'bg-green-100 text-green-800',
+    warning: 'bg-yellow-100 text-yellow-800',
+    error: 'bg-red-100 text-red-800',
+  }
   return (
     <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-        VARIANT[variant],
-        className
-      )}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variantClasses[variant]} ${className}`}
     >
       {children}
     </span>

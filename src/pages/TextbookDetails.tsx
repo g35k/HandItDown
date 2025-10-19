@@ -1,15 +1,15 @@
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Bookmark, ShoppingCart } from 'lucide-react'
+import { ArrowLeft, ShoppingCart } from 'lucide-react'
 import { Button } from '../components/Button'
-import { Card } from '../components/Card'
+//import { Card } from '../components/Card'
 import { Badge } from '../components/Badge'
 import { SectionHeader } from '../components/SectionHeader'
+import PriceWithBreakdown from '../components/PriceWithBreakdown'
 
+// ---- Types ----
 type Availability = 'inStock' | 'lowStock' | 'outOfStock'
-
 type AdviceItem = { text: string; date: string }
-
-type Textbook = {
+interface Textbook {
   id: string
   title: string
   author: string
@@ -24,10 +24,10 @@ type Textbook = {
   condition: string
   description: string
   advice: AdviceItem[]
-  isbn?: string
+  isbn: string
 }
 
-// ✅ Typed array (no `as const` on availability)
+// ---- Sample data ----
 const sampleTextbooks: Textbook[] = [
   {
     id: '1',
@@ -46,8 +46,14 @@ const sampleTextbooks: Textbook[] = [
     description:
       "This acclaimed introductory psychology textbook takes a 'scientific' approach to the study of human behavior and mental processes.",
     advice: [
-      { text: "Focus on chapters 3-5 for the midterm, they're heavily weighted.", date: 'Aug 15, 2023' },
-      { text: 'The online practice quizzes are extremely helpful for exam prep.', date: 'Jul 10, 2023' },
+      {
+        text: "Focus on chapters 3-5 for the midterm, they're heavily weighted.",
+        date: 'Aug 15, 2023',
+      },
+      {
+        text: 'The online practice quizzes are extremely helpful for exam prep.',
+        date: 'Jul 10, 2023',
+      },
     ],
     isbn: '9781319132101',
   },
@@ -67,27 +73,34 @@ const sampleTextbooks: Textbook[] = [
     condition: 'Excellent',
     description:
       "This best-selling calculus textbook has been updated for the needs of today's students with added examples and exercises.",
-    advice: [{ text: "Do all the odd-numbered practice problems, they're similar to exam questions.", date: 'Sep 5, 2023' }],
+    advice: [
+      {
+        text: "Do all the odd-numbered practice problems, they're similar to exam questions.",
+        date: 'Sep 5, 2023',
+      },
+    ],
     isbn: '9781337613927',
   },
 ]
 
+// ---- Component ----
 export function TextbookDetails() {
   const { id } = useParams<{ id: string }>()
-
-  const textbook = sampleTextbooks.find((b) => b.id === id)
+  const textbook = sampleTextbooks.find((book) => book.id === id)
 
   const addToCart = () => {
-    console.log(`Added textbook ${id} to cart`)
+    if (id) console.log(`Added textbook ${id} to cart`)
   }
 
   if (!textbook) {
     return (
       <div className="bg-gray-50 w-full min-h-screen py-8">
         <div className="container mx-auto px-4">
-          <div className="py-12 text-center">
-            <h2 className="mb-4 text-2xl font-bold">Item Not Found</h2>
-            <p className="mb-6">The item you're looking for doesn't exist or has been removed.</p>
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Item Not Found</h2>
+            <p className="mb-6">
+              The item you're looking for doesn't exist or has been removed.
+            </p>
             <Link to="/find">
               <Button variant="primary">Browse Materials</Button>
             </Link>
@@ -97,111 +110,121 @@ export function TextbookDetails() {
     )
   }
 
-  const AVAILABILITY_LABEL: Record<Availability, string> = {
+  const availabilityLabel: Record<Availability, string> = {
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     outOfStock: 'Out of Stock',
   }
 
-  // Assuming your <Badge> supports 'inStock' | 'lowStock' | 'outOfStock' variants
-  const AVAILABILITY_BADGE: Record<Availability, 'inStock' | 'lowStock' | 'outOfStock'> = {
+  const availabilityVariant = {
     inStock: 'inStock',
     lowStock: 'lowStock',
     outOfStock: 'outOfStock',
-  }
+  } as const
+
+  const originalPrice = textbook.price * 4
 
   return (
     <div className="bg-gray-50 w-full min-h-screen py-8">
       <div className="container mx-auto px-4">
         <div className="mb-6">
-          <Link to="/find" className="inline-flex items-center text-blue-600 hover:text-blue-800">
-            <ArrowLeft className="mr-1 h-4 w-4" />
+          <Link
+            to="/find"
+            className="inline-flex items-center text-primary hover:text-primary-dark"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
             Back to Materials
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
             <div className="sticky top-24">
-              <div className="mb-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-                <img src={textbook.image} alt={textbook.title} className="h-auto w-full object-cover" />
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 mb-6">
+                <img
+                  src={textbook.image}
+                  alt={textbook.title}
+                  className="w-full h-auto object-cover"
+                />
               </div>
-
-              <Badge variant={AVAILABILITY_BADGE[textbook.availability]} className="px-3 py-1 text-sm">
-                {AVAILABILITY_LABEL[textbook.availability]}
+              <Badge
+                variant={availabilityVariant[textbook.availability]}
+                className="text-sm px-3 py-1"
+              >
+                {availabilityLabel[textbook.availability]}
               </Badge>
-
-              {textbook.isbn && <p className="mt-2 text-sm text-gray-500">ISBN: {textbook.isbn}</p>}
+              {textbook.isbn && (
+                <p className="mt-2 text-sm text-gray-500">
+                  ISBN: {textbook.isbn}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="lg:col-span-2">
             <SectionHeader title={textbook.title} />
-
             <div className="mb-6">
-              <p className="mb-2 text-lg text-gray-700">by {textbook.author}</p>
-              <p className="mb-4 text-gray-600">
-                {textbook.edition} • Published {textbook.year} • {textbook.publisher}
+              <p className="text-lg text-gray-700 mb-2">by {textbook.author}</p>
+              <p className="text-gray-600 mb-4">
+                {textbook.edition} • Published {textbook.year} •{' '}
+                {textbook.publisher}
               </p>
 
-              <div className="mb-6 flex flex-wrap items-center gap-4">
-                <div className="rounded-md bg-blue-50 px-3 py-1.5">
+              <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="bg-primary-light px-3 py-1.5 rounded-md">
                   <span className="text-xs text-gray-500">Course</span>
                   <p className="font-medium text-gray-900">{textbook.course}</p>
                 </div>
-                <div className="rounded-md bg-blue-50 px-3 py-1.5">
+                <div className="bg-primary-light px-3 py-1.5 rounded-md">
                   <span className="text-xs text-gray-500">Professor</span>
-                  <p className="font-medium text-gray-900">Prof. {textbook.professor}</p>
+                  <p className="font-medium text-gray-900">
+                    Prof. {textbook.professor}
+                  </p>
                 </div>
-                <div className="rounded-md bg-blue-50 px-3 py-1.5">
+                <div className="bg-primary-light px-3 py-1.5 rounded-md">
                   <span className="text-xs text-gray-500">Condition</span>
-                  <p className="font-medium text-gray-900">{textbook.condition}</p>
+                  <p className="font-medium text-gray-900">
+                    {textbook.condition}
+                  </p>
                 </div>
               </div>
 
-              <div className="mb-8 flex items-center justify-between">
-                <span className="text-2xl font-bold text-blue-600">${textbook.price.toFixed(2)}</span>
-
-                <Button
-                  variant="primary"
-                  onClick={addToCart}
-                  disabled={textbook.availability === 'outOfStock'}
-                >
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  {textbook.availability === 'outOfStock' ? 'Out of Stock' : 'Add to Cart'}
-                </Button>
-              </div>
-
-              <div className="mb-8">
-                <h3 className="mb-3 text-lg font-bold">Description</h3>
-                <p className="text-gray-700">{textbook.description}</p>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="mb-4 flex items-center text-lg font-bold">
-                <Bookmark className="mr-2 h-5 w-5 text-orange-500" />
-                Student Advice
-              </h3>
-
-              {textbook.advice.length > 0 ? (
-                <div className="space-y-4">
-                  {textbook.advice.map((item, idx) => (
-                    <Card key={idx}>
-                      <Card.Body>
-                        <p className="mb-2 italic text-gray-800">"{item.text}"</p>
-                        <p className="text-sm text-gray-500">{item.date}</p>
-                      </Card.Body>
-                    </Card>
-                  ))}
+              {/* Price Display and Breakdown */}
+              <div className="mb-8 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <PriceWithBreakdown
+                    total={textbook.price}
+                    originalPrice={originalPrice}
+                  />
+                  <Button
+                    variant="primary"
+                    onClick={addToCart}
+                    disabled={textbook.availability === 'outOfStock'}
+                  >
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    {textbook.availability === 'outOfStock'
+                      ? 'Out of Stock'
+                      : 'Add to Cart'}
+                  </Button>
                 </div>
-              ) : (
-                <Card>
-                  <Card.Body className="py-6 text-center">
-                    <p className="text-gray-500">No advice has been shared for this item yet.</p>
-                  </Card.Body>
-                </Card>
-              )}
+
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-sm text-gray-500 mb-2">
+                    Compared to new price: ${originalPrice.toFixed(2)}
+                  </p>
+                  <div className="bg-primary-light/30 px-3 py-2 rounded text-sm">
+                    <span className="font-medium text-primary-dark">
+                      You save:
+                    </span>{' '}
+                    ${(originalPrice - textbook.price).toFixed(2)} (
+                    {Math.round(
+                      ((originalPrice - textbook.price) / originalPrice) * 100
+                    )}
+                    % off)
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

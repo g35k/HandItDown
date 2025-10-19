@@ -1,3 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* PLEASE NOTE: THESE TAILWIND IMPORTS SHOULD NEVER BE DELETED */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+/* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+:root {
+  --primary: #008453;
+  --accent: #e6b711;
+  --primary-light: #e6f5ee;
+  --accent-light: #fff8e1;
+  --primary-dark: #006940;
+  --accent-dark: #d4a700;
+}
+@layer base {
+  body {
+    @apply text-gray-800;
+  }
+}
+@layer components {
+  .btn-primary {
+    @apply bg-[#008453] text-white hover:bg-[#006940] disabled:bg-[#80c2a9];
+  }
+  .btn-accent {
+    @apply bg-[#e6b711] text-gray-900 hover:bg-[#d4a700] disabled:bg-[#f3dea8];
+  }
+}

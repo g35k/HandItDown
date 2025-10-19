@@ -1,11 +1,9 @@
-import { Card } from '@/components/Card' // or './Card' if in same folder
-
+import { Card } from './Card'
 interface AdviceCardProps {
   advice: string
   course: string
   date: string
 }
-
 export function AdviceCard({ advice, course, date }: AdviceCardProps) {
   return (
     <Card className="h-full">
